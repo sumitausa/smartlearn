@@ -33,9 +33,6 @@ graph TD
 - **Learning Resources**: Personalized YouTube tutorial recommendations based on proficiency level
 - **User-Friendly Interface**: Clean, responsive design using Bootstrap
 
-  ## Prerequisites
-  # - Python 3.x: This project was developed and tested using Python 3.x.
-  # - OpenAI API key: This project uses OpenAI's GPT-3.5 model to generate quizzes.
 
 ## Prerequisites
 
