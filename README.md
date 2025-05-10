@@ -6,72 +6,20 @@ An interactive web application that generates quizzes on any topic using OpenAI'
 
 ```mermaid
 graph TD
-    %% Frontend Components
-    subgraph Frontend[User Interface]
-        UI[Web Browser] --> |1. Enter Topic| Form[Quiz Form]
-        Form --> |2. Display Quiz| Questions[Quiz Questions]
-        Questions --> |3. Submit Answers| Results[Results Page]
-    end
-
-    %% Backend Components
-    subgraph Backend[Flask Application]
-        Server[Flask Server] --> |4. Process Request| Generator[Quiz Generator]
-        Generator --> |5. API Call| OpenAI[OpenAI GPT-3.5]
-        OpenAI --> |6. Quiz Content| Generator
-        Server --> |7. Process Answers| Calculator[Score Calculator]
-        Calculator --> |8. Calculate Level| Analyzer[Level Analyzer]
-    end
-
-    %% External Services
-    subgraph External[External Services]
-        YouTube[YouTube API]
-    end
-
-    %% Data Flow
-    Form --> |Request| Server
-    Generator --> |Quiz Data| Questions
-    Results --> |Score| Calculator
-    Analyzer --> |Learning Level| Results
-    Results --> |9. Generate Links| YouTube
-
-    %% Styling
-    classDef frontend fill:#d4f1f9,stroke:#0077b6
-    classDef backend fill:#e9ecef,stroke:#495057
-    classDef external fill:#ffe5d9,stroke:#bc4749
-
-    class UI,Form,Questions,Results frontend
-    class Server,Generator,Calculator,Analyzer backend
-    class OpenAI,YouTube external
+    A[User Login] --> B[Select Topic]
+    B --> C[Generate Quiz]
+    C --> D[Take Quiz]
+    D --> E[Submit Answers]
+    E --> F[Calculate Score]
+    F --> G[Update Level]
+    G --> H[View Progress]
+    
+    style A fill:#e1f5fe
+    style D fill:#e8f5e9
+    style F fill:#fff3e0
+    style H fill:#f3e5f5
 ```
 
-## Application Components
-
-### Frontend
-- **Quiz Form**: Accepts topic input from users
-- **Quiz Questions**: Displays multiple-choice questions
-- **Results Page**: Shows score, proficiency level, and learning resources
-
-### Backend
-- **Flask Server**: Handles HTTP requests and session management
-- **Quiz Generator**: Interfaces with OpenAI to create quiz content
-- **Score Calculator**: Processes user answers and calculates scores
-- **ML Classifier**: Gradient Boosting model that predicts user proficiency level based on:
-  - Average quiz score
-  - Number of quizzes taken
-  - Hint usage patterns
-  - Retry attempts
-
-### External Services
-- **OpenAI GPT-3.5**: Generates quiz questions and answers
-- **YouTube**: Provides relevant tutorial recommendations
-        L[OpenAI GPT-3.5] --> I
-        M[YouTube] --> F
-    end
-
-    style Frontend fill:#f9f,stroke:#333,stroke-width:2px
-    style Backend fill:#bbf,stroke:#333,stroke-width:2px
-    style External fill:#bfb,stroke:#333,stroke-width:2px
-```
 
 ## Features
 
