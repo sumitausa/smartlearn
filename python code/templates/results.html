@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartLearn - Quiz Results</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .score-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            background-color: #28a745;
+        }
+        .next-steps {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-left: 4px solid #007bff;
+        }
+        body.light-mode {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        body.light-mode .question-review {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode .bg-success-subtle {
+            background-color: rgba(25, 135, 84, 0.1) !important;
+        }
+        body.light-mode .bg-danger-subtle {
+            background-color: rgba(220, 53, 69, 0.1) !important;
+        }
+        body.light-mode .option {
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        body.light-mode .explanation {
+            background-color: rgba(13, 110, 253, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #0d6efd;
+        }
+        body.dark-mode {
+            background-color: #121212;
+            color: #f1f1f1;
+        }
+
+        .container {
+            margin-top: 20px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+        .card.border-success {
+            border: 2px solid #198754;
+        }
+        .card.border-danger {
+            border: 2px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">SmartLearn</a>
+            <button class="btn btn-outline-light me-3" onclick="toggleMode()">
+                <i class="bi bi-moon-stars me-2"></i>Dark Mode
+            </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/progress">
+                            <i class="bi bi-graph-up"></i> View Progress
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Score Overview Card -->
+        <div class="card progress-card">
+            <div class="card-body">
+                <h3>Quiz Results: {{ topic }}</h3>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="progress" style="height: 30px;">
+                            <div class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: {{ accuracy }}%{% if accuracy >= 80 %};background-color: #198754{% elif accuracy >= 60 %};background-color: #ffc107{% else %};background-color: #dc3545{% endif %}" 
+                                 aria-valuenow="{{ accuracy }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                {{ score }} / {{ total }} ({{ "%.1f"|format(accuracy) }}%)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                        <div class="alert alert-info">
+                            <h5>Your Level: {{ user_level }}</h5>
+                            <p>Watch recommended tutorials:</p>
+                            <a href="{{ youtube_url }}" target="_blank" class="btn btn-danger">
+                                <i class="bi bi-youtube"></i> Watch Tutorial Videos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Question Review -->
+        <div class="card progress-card mt-4">
+            <div class="card-body">
+                <h3 class="card-title mb-4">Question Review</h3>
+                {% for result in results %}
+                <div class="question-review mb-4 p-3 {% if result.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %} rounded">
+                    <h5>Question {{ loop.index }}</h5>
+                    <p class="mb-3">{{ result.question }}</p>
+                    
+                    <div class="options-list">
+                        <div class="options-list">
+                            <div class="option mb-2 {% if result.is_correct %}text-success{% else %}text-danger{% endif %}">
+                                <strong>Your Answer:</strong> {{ result.user_answer }}
+                                {% if not result.is_correct %}
+                                    <br>
+                                    <strong>Correct Answer:</strong> {{ result.correct_answer }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if result.explanation %}
+                    <div class="explanation mt-3">
+                        <strong>Explanation:</strong> {{ result.explanation }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Navigation Buttons -->
+        <div class="text-center mt-4 mb-5">
+            <a href="/" class="btn btn-primary me-2">Take Another Quiz</a>
+            <a href="/progress" class="btn btn-outline-primary">View Progress</a>
+        </div>
+    </div>
+
+
+    <script>
+        window.onload = () => {
+            const mode = localStorage.getItem('smartlearn-theme') || 'light';
+            document.body.classList.add(mode + '-mode');
+            const toggleBtn = document.querySelector('[onclick="toggleMode()"]');
+            if (mode === 'dark') {
+                toggleBtn.innerHTML = '<i class="bi bi-sun me-2"></i>Light Mode';
+            }
+        };
+        function toggleMode() {
+            const toggleBtn = document.querySelector('[onclick="toggleMode()"]');
+            if (document.body.classList.contains('light-mode')) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('smartlearn-theme', 'dark');
+                toggleBtn.innerHTML = '<i class="bi bi-sun me-2"></i>Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                localStorage.setItem('smartlearn-theme', 'light');
+                toggleBtn.innerHTML = '<i class="bi bi-moon-stars me-2"></i>Dark Mode';
+            }
+        }
+    </script>
+</body>
+</html>
